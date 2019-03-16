@@ -1,21 +1,15 @@
-package com.licenta.user;
+package com.licenta.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class ApplicationUser {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String username;
-    private String password;
+public class ApplicationUser extends BaseEntity<Long> implements Serializable{
 
-    public long getId() {
-        return id;
-    }
+    @Column(name="username")
+    private String username;
+    @Column(name="password")
+    private String password;
 
     public String getUsername() {
         return username;

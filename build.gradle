@@ -25,10 +25,32 @@ repositories {
 
 
 dependencies {
+	//postgres
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.1'
+
+	//spring
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile("org.springframework.boot:spring-boot-starter-security")
-	compile("com.auth0:java-jwt:3.4.0")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+
+	//jwt
+	compile("com.auth0:java-jwt:3.4.0")
 	compile("org.hsqldb:hsqldb")
+
+	compile group: 'org.springframework', name: 'spring-context-support', version: '5.0.3.RELEASE'
+	compile group: 'org.springframework', name: 'spring-orm', version: '5.0.3.RELEASE'
+	compile group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.0.3.RELEASE'
+
+	compile group: 'org.hibernate', name: 'hibernate-core', version:'5.2.6.Final'
+
+	compile group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.6.1'
+	compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.7'
+
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+
+	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+
+
 }

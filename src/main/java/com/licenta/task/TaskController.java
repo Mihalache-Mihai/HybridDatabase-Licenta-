@@ -1,5 +1,7 @@
 package com.licenta.task;
 
+import com.licenta.models.Task;
+import com.licenta.repository.TaskRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

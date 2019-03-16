@@ -1,5 +1,7 @@
 package com.licenta.user;
 
+import com.licenta.models.ApplicationUser;
+import com.licenta.repository.ApplicationUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
