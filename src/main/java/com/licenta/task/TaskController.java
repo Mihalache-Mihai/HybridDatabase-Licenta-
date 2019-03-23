@@ -39,6 +39,7 @@ public class TaskController {
         Task existingTask = taskRepository.findById(id).get();
         Assert.notNull(existingTask, "Task not found");
         existingTask.setDescription(task.getDescription());
+        existingTask.setProperties(task.getProperties());
         taskRepository.save(existingTask);
     }
 
