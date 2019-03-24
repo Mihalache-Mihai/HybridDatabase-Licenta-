@@ -24,10 +24,16 @@ repositories {
 	//maven {url "https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-52"}
 }
 
+bootJar {
+	baseName = 'gs-accessing-data-mongodb'
+	version =  '0.1.0'
+}
 
 dependencies {
 	//postgres
 	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.1'
+	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
+
 
 	//spring
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')

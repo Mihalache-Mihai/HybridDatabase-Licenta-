@@ -1,7 +1,9 @@
 package com.licenta.task;
 
 import com.licenta.models.Task;
+import com.licenta.repository.TaskMongoRepository;
 import com.licenta.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +20,18 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TaskController {
 
+    @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private TaskMongoRepository taskMongoRepository;
 
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+
+    public TaskController(){}
 
     @PostMapping
     public void addTask(@RequestBody Task task) {
         taskRepository.save(task);
+        taskMongoRepository.save(task);
     }
 
     @GetMapping
