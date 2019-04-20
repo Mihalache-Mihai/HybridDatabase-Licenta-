@@ -7,16 +7,20 @@ import java.io.Serializable;
 
 @Entity
 @Data
-@Table(name = "users")
-public class ApplicationUser implements Serializable{
+public class Credentials implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(unique = true, nullable = false)
-    private Long ID;
+    @Column(unique = true)
+    private Long id;
 
-    @Column(name="username")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    @Column(name="username",unique = true)
     private String username;
+
     @Column(name="password")
     private String password;
 

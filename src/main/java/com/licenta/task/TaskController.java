@@ -35,7 +35,7 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks() {
+    public Iterable<Task> getTasks() {
         return taskRepository.findAll();
     }
 

@@ -6,32 +6,32 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Entity
 @Data
-@Entity(name = "Task")
 @TypeDef(name="hstore",typeClass = PostgreSQLHStoreType.class)
-public class Task implements Serializable{
+public class Medicine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(unique = true, nullable = false)
-    private Long ID;
-
-
-    @Column(name="description")
-    private String description;
-
+    private Long id;
 
     @Type(type="hstore")
     @Column(columnDefinition = "hstore")
-    private Map<String,String> properties = new HashMap<>();
+    private Map<String,String> prospect=new HashMap<>();
 
-    protected Task() { }
 
-    public Task(String description) {
-        this.description = description;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medicine_id")
+    private Company company;
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Medicine )) return false;
+//        return id != null && id.equals(((Medicine) o).getId());
+//    }
 }
