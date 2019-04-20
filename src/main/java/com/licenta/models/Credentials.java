@@ -1,12 +1,14 @@
 package com.licenta.models;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Data
+@ToString
 public class Credentials implements Serializable{
 
     @Id

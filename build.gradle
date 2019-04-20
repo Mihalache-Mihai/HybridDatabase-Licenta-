@@ -55,6 +55,9 @@ dependencies {
 	compile("com.auth0:java-jwt:3.4.0")
 	compile("org.hsqldb:hsqldb")
 
+	//logger
+	compile group: 'org.slf4j', name: 'slf4j-api', version: "1.7.25"
+
 
 
 

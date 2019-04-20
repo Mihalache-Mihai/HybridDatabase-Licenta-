@@ -1,12 +1,15 @@
 package com.licenta.models;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
-public class Employee {
+@ToString
+public class Employee implements Serializable {
     @Id
     @GeneratedValue
     @Column(unique = true)
