@@ -1,5 +1,6 @@
 package com.licenta.models;
 
+import com.licenta.utils.Roles;
 import lombok.Data;
 import lombok.ToString;
 
@@ -8,7 +9,6 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@ToString
 public class Employee implements Serializable {
     @Id
     @GeneratedValue
@@ -31,6 +31,10 @@ public class Employee implements Serializable {
     @Column(name="salary")
     private Integer salary;
 
-    @Column(name="cnp")
+    @Column(name="cnp",unique = true)
     private String cnp;
+
+    @Column(name="role")
+    private Roles role;
+
 }

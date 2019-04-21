@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.licenta.security.SecurityConstants.HEADER_STRING;
-import static com.licenta.security.SecurityConstants.SECRET;
-import static com.licenta.security.SecurityConstants.TOKEN_PREFIX;
+import static com.licenta.security.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter{
     public JWTAuthorizationFilter(AuthenticationManager authManager){

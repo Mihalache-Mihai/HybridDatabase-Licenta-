@@ -29,20 +29,9 @@ public class Company implements Serializable{
     @Column
     @OneToMany(
             mappedBy = "company",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     private List<Medicine> medicines = new ArrayList<>();
-
-    public void addMedicine(Medicine medicine) {
-        medicines.add(medicine);
-        medicine.setCompany(this);
-    }
-
-    public void removeMedicine(Medicine medicine) {
-        medicines.remove(medicine);
-        medicine.setCompany(null);
-    }
 
     @Override
     public String toString() {

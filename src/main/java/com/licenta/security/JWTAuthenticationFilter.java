@@ -20,10 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static com.licenta.security.SecurityConstants.EXPIRATION_TIME;
-import static com.licenta.security.SecurityConstants.HEADER_STRING;
-import static com.licenta.security.SecurityConstants.TOKEN_PREFIX;
-import static com.licenta.security.SecurityConstants.SECRET;
+import static com.licenta.security.SecurityConstants.*;
 
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
