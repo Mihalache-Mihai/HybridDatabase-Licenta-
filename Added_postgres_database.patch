@@ -1,0 +1,475 @@
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ build.gradle	(date 1552746759992)
+@@ -25,10 +25,32 @@
+ 
+ 
+ dependencies {
++	//postgres
++	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.1'
++
++	//spring
+ 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+ 	compile('org.springframework.boot:spring-boot-starter-web')
+ 	compile("org.springframework.boot:spring-boot-starter-security")
+-	compile("com.auth0:java-jwt:3.4.0")
+ 	testCompile('org.springframework.boot:spring-boot-starter-test')
++
++
++	//jwt
++	compile("com.auth0:java-jwt:3.4.0")
+ 	compile("org.hsqldb:hsqldb")
++
++	compile group: 'org.springframework', name: 'spring-context-support', version: '5.0.3.RELEASE'
++	compile group: 'org.springframework', name: 'spring-orm', version: '5.0.3.RELEASE'
++	compile group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.0.3.RELEASE'
++
++	compile group: 'org.hibernate', name: 'hibernate-core', version:'5.2.6.Final'
++
++	compile group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.6.1'
++	compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.7'
++
++	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
++
++	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
++
++
+ }
+Index: src/main/java/com/licenta/config/AppLocalConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/config/AppLocalConfig.java	(date 1552747430557)
++++ src/main/java/com/licenta/config/AppLocalConfig.java	(date 1552747430557)
+@@ -0,0 +1,21 @@
++package com.licenta.config;
++
++
++import org.springframework.context.annotation.*;
++import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
++
++@Configuration
++@Import({JPAConfig.class})
++@PropertySources({@PropertySource(value = "classpath:db.properties"),
++})
++public class AppLocalConfig {
++    /**
++     * Enables placeholders usage with SpEL expressions.
++     *
++     * @return
++     */
++    @Bean
++    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
++        return new PropertySourcesPlaceholderConfigurer();
++    }
++}
+Index: src/main/java/com/licenta/config/CacheConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/config/CacheConfig.java	(date 1552746653463)
++++ src/main/java/com/licenta/config/CacheConfig.java	(date 1552746653463)
+@@ -0,0 +1,49 @@
++package com.licenta.config;
++
++import com.github.benmanes.caffeine.cache.Caffeine;
++import com.github.benmanes.caffeine.cache.CaffeineSpec;
++import com.github.benmanes.caffeine.cache.RemovalCause;
++import com.github.benmanes.caffeine.cache.RemovalListener;
++import org.springframework.cache.CacheManager;
++import org.springframework.cache.caffeine.CaffeineCacheManager;
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++
++import java.util.concurrent.TimeUnit;
++
++@Configuration
++public class CacheConfig {
++    @Bean
++    public CacheManager cacheManager() {
++        String specAsString = "initialCapacity=100,maximumSize=500,expireAfterAccess=5m,recordStats";
++        CaffeineCacheManager cacheManager = new CaffeineCacheManager("AIRCRAFTS", "SECOND_CACHE");
++        cacheManager.setAllowNullValues(false); //can happen if you get a value from a @Cachable that returns null
++        //cacheManager.setCacheSpecification(specAsString);
++        cacheManager.setCaffeineSpec(caffeineSpec());
++        cacheManager.setCaffeine(caffeineCacheBuilder());
++        return cacheManager;
++    }
++
++    CaffeineSpec caffeineSpec() {
++        return CaffeineSpec.parse
++                ("initialCapacity=100,maximumSize=500,expireAfterAccess=5m,recordStats");
++    }
++
++    Caffeine<Object, Object> caffeineCacheBuilder() {
++        return Caffeine.newBuilder()
++                .initialCapacity(100)
++                .maximumSize(150)
++                .expireAfterAccess(5, TimeUnit.MINUTES)
++                .weakKeys()
++                .removalListener(new CustomRemovalListener())
++                .recordStats();
++    }
++
++    class CustomRemovalListener implements RemovalListener<Object, Object> {
++        @Override
++        public void onRemoval(Object key, Object value, RemovalCause cause) {
++            System.out.format("removal listerner called with key [%s], cause [%s], evicted [%S]\n",
++                    key, cause.toString(), cause.wasEvicted());
++        }
++    }
++}
+Index: src/main/java/com/licenta/config/JPAConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/config/JPAConfig.java	(date 1552746608319)
++++ src/main/java/com/licenta/config/JPAConfig.java	(date 1552746608319)
+@@ -0,0 +1,89 @@
++package com.licenta.config;
++
++import com.zaxxer.hikari.HikariConfig;
++import com.zaxxer.hikari.HikariDataSource;
++import org.postgresql.Driver;
++import org.springframework.beans.factory.annotation.Value;
++import org.springframework.cache.annotation.EnableCaching;
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
++import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
++import org.springframework.orm.jpa.JpaTransactionManager;
++import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
++import org.springframework.orm.jpa.vendor.Database;
++import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
++import org.springframework.transaction.PlatformTransactionManager;
++import org.springframework.transaction.annotation.EnableTransactionManagement;
++
++import javax.persistence.EntityManager;
++import javax.persistence.EntityManagerFactory;
++import javax.sql.DataSource;
++
++@Configuration
++@EnableJpaRepositories({"com.licenta.repository"})
++@EnableTransactionManagement
++public class JPAConfig {
++    @Value("${db.jdbcUrl}")
++    private String jdbcUrl;
++
++    @Value("${db.username}")
++    private String username;
++
++    @Value("${db.password}")
++    private String password;
++
++    @Value("${db.generateDDL}")
++    private Boolean generateDDL;
++
++    /**
++     * http://www.baeldung.com/hikaricp
++     *
++     * @return
++     */
++    @Bean
++    public DataSource dataSource() {
++        HikariConfig config = new HikariConfig();
++        config.setJdbcUrl(jdbcUrl);
++        config.setUsername(username);
++        config.setPassword(password);
++        config.setDriverClassName(Driver.class.getName());
++        config.addDataSourceProperty("cachePrepStmts", "true");
++        config.addDataSourceProperty("prepStmtCacheSize", "250");
++        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
++        HikariDataSource dataSource = new HikariDataSource(config);
++        return dataSource;
++    }
++
++    @Bean
++    public EntityManagerFactory entityManagerFactory() {
++        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
++        vendorAdapter.setDatabase(Database.POSTGRESQL);
++        vendorAdapter.setGenerateDdl(generateDDL);
++        vendorAdapter.setShowSql(true);
++
++        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
++        factory.setJpaVendorAdapter(vendorAdapter);
++        factory.setPackagesToScan("com.licenta.models");
++        factory.setDataSource(dataSource());
++        factory.afterPropertiesSet();
++        return factory.getObject();
++    }   
++
++    @Bean
++    public EntityManager entityManager() {
++        return entityManagerFactory().createEntityManager();
++    }
++
++    @Bean
++    PlatformTransactionManager transactionManager() {
++        JpaTransactionManager manager = new JpaTransactionManager();
++        manager.setEntityManagerFactory(entityManagerFactory());
++        return manager;
++    }
++
++    @Bean
++    public HibernateExceptionTranslator hibernateExceptionTranslator() {
++        return new HibernateExceptionTranslator();
++    }
++}
+\ No newline at end of file
+Index: src/main/java/com/licenta/user/ApplicationUser.java
+===================================================================
+--- src/main/java/com/licenta/user/ApplicationUser.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/models/ApplicationUser.java	(date 1552238526676)
+@@ -1,22 +1,16 @@
+-package com.licenta.user;
++package com.licenta.models;
+ 
+-import javax.persistence.Entity;
+-import javax.persistence.GeneratedValue;
+-import javax.persistence.GenerationType;
+-import javax.persistence.Id;
++import javax.persistence.*;
++import java.io.Serializable;
+ 
+ @Entity
+-public class ApplicationUser {
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private long id;
++public class ApplicationUser extends BaseEntity<Long> implements Serializable{
++
++    @Column(name="username")
+     private String username;
++    @Column(name="password")
+     private String password;
+ 
+-    public long getId() {
+-        return id;
+-    }
+-
+     public String getUsername() {
+         return username;
+     }
+Index: src/main/java/com/licenta/models/BaseEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/models/BaseEntity.java	(date 1552237422870)
++++ src/main/java/com/licenta/models/BaseEntity.java	(date 1552237422870)
+@@ -0,0 +1,48 @@
++package com.licenta.models;
++
++import javax.persistence.Column;
++import javax.persistence.GeneratedValue;
++import javax.persistence.Id;
++import javax.persistence.MappedSuperclass;
++import java.io.Serializable;
++
++@MappedSuperclass
++public class BaseEntity<ID> implements Serializable {
++
++    @Id
++    @GeneratedValue
++    @Column(unique = true, nullable = false)
++    private ID id;
++
++    public BaseEntity(){}
++
++    public BaseEntity(ID id)
++    {
++        this.id = id;
++    }
++
++    /**
++     * @return the ID of the current entity.
++     */
++    public ID getId() {
++        return id;
++    }
++
++    /**
++     * @param id the new ID of the entity.
++     */
++    public void setId(ID id) {
++        this.id = id;
++    }
++
++
++    /**
++     * @return a string containing the id of the entity.
++     */
++    @Override
++    public String toString() {
++        return "BaseEntity{" +
++                "id=" + id +
++                '}';
++    }
++}
+Index: src/main/java/com/licenta/task/Task.java
+===================================================================
+--- src/main/java/com/licenta/task/Task.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/models/Task.java	(date 1552239939391)
+@@ -1,15 +1,12 @@
+-package com.licenta.task;
++package com.licenta.models;
+ 
+-import javax.persistence.Entity;
+-import javax.persistence.GeneratedValue;
+-import javax.persistence.GenerationType;
+-import javax.persistence.Id;
++import javax.persistence.*;
++import java.io.Serializable;
+ 
+ @Entity
+-public class Task {
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private long id;
++public class Task extends BaseEntity<Long> implements Serializable{
++
++    @Column(name="description")
+     private String description;
+ 
+     protected Task() { }
+@@ -18,10 +15,6 @@
+         this.description = description;
+     }
+ 
+-    public long getId() {
+-        return id;
+-    }
+-
+     public String getDescription() {
+         return description;
+     }
+Index: src/main/java/com/licenta/user/ApplicationUserRepository.java
+===================================================================
+--- src/main/java/com/licenta/user/ApplicationUserRepository.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/repository/ApplicationUserRepository.java	(date 1552239307243)
+@@ -1,8 +1,8 @@
+-package com.licenta.user;
++package com.licenta.repository;
+ 
+-import org.springframework.data.jpa.repository.JpaRepository;
++import com.licenta.models.ApplicationUser;
+ 
+-public interface ApplicationUserRepository extends JpaRepository<ApplicationUser,Long> {
++public interface ApplicationUserRepository extends Repository<ApplicationUser,Long> {
+     ApplicationUser findByUsername(String username);
+ 
+ }
+Index: src/main/java/com/licenta/repository/Repository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/repository/Repository.java	(date 1552237513659)
++++ src/main/java/com/licenta/repository/Repository.java	(date 1552237513659)
+@@ -0,0 +1,13 @@
++package com.licenta.repository;
++
++import com.licenta.models.BaseEntity;
++import org.springframework.data.jpa.repository.JpaRepository;
++import org.springframework.data.repository.NoRepositoryBean;
++import org.springframework.transaction.annotation.Transactional;
++
++import java.io.Serializable;
++
++@NoRepositoryBean
++@Transactional
++public interface Repository<T extends BaseEntity<ID>,ID extends Serializable> extends JpaRepository<T,ID> {
++}
+Index: src/main/java/com/licenta/security/JWTAuthenticationFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/security/JWTAuthenticationFilter.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/security/JWTAuthenticationFilter.java	(date 1552237088973)
+@@ -3,7 +3,7 @@
+ 
+ import com.auth0.jwt.JWT;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+-import com.licenta.user.ApplicationUser;
++import com.licenta.models.ApplicationUser;
+ import org.springframework.security.authentication.AuthenticationManager;
+ import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+ import org.springframework.security.core.Authentication;
+Index: src/main/java/com/licenta/task/TaskController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/task/TaskController.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/task/TaskController.java	(date 1552237422828)
+@@ -1,5 +1,7 @@
+ package com.licenta.task;
+ 
++import com.licenta.models.Task;
++import com.licenta.repository.TaskRepository;
+ import org.springframework.util.Assert;
+ import org.springframework.web.bind.annotation.DeleteMapping;
+ import org.springframework.web.bind.annotation.GetMapping;
+Index: src/main/java/com/licenta/task/TaskRepository.java
+===================================================================
+--- src/main/java/com/licenta/task/TaskRepository.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/task/TaskRepository.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
+@@ -1,6 +0,0 @@
+-package com.licenta.task;
+-
+-import org.springframework.data.jpa.repository.JpaRepository;
+-
+-public interface TaskRepository extends JpaRepository<Task, Long> {
+-}
+\ No newline at end of file
+Index: src/main/java/com/licenta/user/UserController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/user/UserController.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/user/UserController.java	(date 1552237423053)
+@@ -1,5 +1,7 @@
+ package com.licenta.user;
+ 
++import com.licenta.models.ApplicationUser;
++import com.licenta.repository.ApplicationUserRepository;
+ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+ import org.springframework.web.bind.annotation.PostMapping;
+ import org.springframework.web.bind.annotation.RequestBody;
+Index: src/main/java/com/licenta/user/UserDetailsServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/licenta/user/UserDetailsServiceImpl.java	(revision 3c3180f79c54d31108648ab237a66bbd84904928)
++++ src/main/java/com/licenta/user/UserDetailsServiceImpl.java	(date 1552237422726)
+@@ -1,5 +1,7 @@
+ package com.licenta.user;
+ 
++import com.licenta.models.ApplicationUser;
++import com.licenta.repository.ApplicationUserRepository;
+ import org.springframework.security.core.userdetails.User;
+ import org.springframework.security.core.userdetails.UserDetails;
+ import org.springframework.security.core.userdetails.UserDetailsService;
+Index: src/main/resources/db.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- src/main/resources/db.properties	(date 1552745865476)
++++ src/main/resources/db.properties	(date 1552745865476)
+@@ -0,0 +1,4 @@
++db.jdbcUrl = jdbc:postgresql://localhost:5432/licenta
++db.username = postgres
++db.password = password1
++db.generateDDL = true
+\ No newline at end of file

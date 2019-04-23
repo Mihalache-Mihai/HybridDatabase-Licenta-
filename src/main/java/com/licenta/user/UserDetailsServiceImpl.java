@@ -1,7 +1,9 @@
 package com.licenta.user;
 
 import com.licenta.models.Credentials;
+import com.licenta.models.Employee;
 import com.licenta.repository.ApplicationUserRepository;
+import com.licenta.repository.EmployeeRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,9 +15,12 @@ import static java.util.Collections.emptyList;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService{
     private ApplicationUserRepository applicationUserRepository;
+    private EmployeeRepository employeeRepository;
 
-    public UserDetailsServiceImpl(ApplicationUserRepository applicationUserRepository) {
+    public UserDetailsServiceImpl(ApplicationUserRepository applicationUserRepository,EmployeeRepository employeeRepository) {
+        super();
         this.applicationUserRepository = applicationUserRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -24,6 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         if(credentials == null){
             throw new UsernameNotFoundException(username);
         }
-        return new User(credentials.getUsername(), credentials.getPassword(),emptyList());
+        Employee e = employeeRepository.findByCredentials(credentials);
+        return new AppUserPrincipal(e);
     }
 }

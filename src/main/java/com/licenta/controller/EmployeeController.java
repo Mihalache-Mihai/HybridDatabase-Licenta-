@@ -30,6 +30,9 @@ public class EmployeeController {
 
     @PutMapping(value = "/{id}")
     public void editEmployee(@PathVariable long id, @RequestBody Employee employee) {
+        if(employee.getRole().equals("ADMINISTRATOR")){
+
+        }
         Employee existingEmployee = employeeRepository.findById(id).orElse(null);
         Assert.notNull(existingEmployee, "Employee not found");
         if (employee.getCnp() != null) {
