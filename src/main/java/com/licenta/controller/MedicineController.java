@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/medicine")
 public class MedicineController {
@@ -73,5 +75,11 @@ public class MedicineController {
         medicineMongoRepository.findById(idMongo).ifPresent(medicineMongoRepository::delete);
         log.info("Medicine mongo with id "+id+" deleted successfully");
     }
+
+    @RequestMapping("/{name}")
+    public List<Medicine> findByName(@PathVariable String name){
+        return medicineRepository.findByName(name);
+    }
+
 
 }

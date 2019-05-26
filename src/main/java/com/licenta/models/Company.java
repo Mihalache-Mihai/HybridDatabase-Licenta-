@@ -1,5 +1,6 @@
 package com.licenta.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
 
@@ -27,9 +28,11 @@ public class Company implements Serializable{
     private String companyName;
 
     @Column
+    @JsonIgnore
     @OneToMany(
             mappedBy = "company",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<Medicine> medicines = new ArrayList<>();
 

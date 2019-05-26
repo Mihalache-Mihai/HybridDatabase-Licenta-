@@ -1,5 +1,6 @@
 package com.licenta.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
 import lombok.Data;
 import lombok.ToString;
@@ -21,6 +22,9 @@ public class Medicine implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Column(name="name")
+    private String name;
 
     @Type(type="hstore")
     @Column(columnDefinition = "hstore")

@@ -4,7 +4,9 @@ import com.licenta.models.Prescription;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
+
 public interface PrescriptionMongoRepository extends MongoRepository<Prescription,String> {
-    @Query(value = "{'prescriptionSeries' : ?0 }",delete = true)
-    Prescription deletePrescriptionByPrescriptionSeries(String prescriptionSeries);
+    List<Prescription> findAllByPrescriptionSeriesAndCNP(String prescriptionSeries, String CNP);
+    List<Prescription> findAllByPrescriptionSeries(String prescriptionSeries);
 }

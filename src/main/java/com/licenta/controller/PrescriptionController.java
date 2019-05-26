@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/prescription")
 public class PrescriptionController {
@@ -83,8 +85,15 @@ public class PrescriptionController {
                 break;
             }
         }
-//        String s = String.valueOf(prescriptionSeries);
-//        prescriptionMongoRepository.deletePrescriptionByPrescriptionSeries(s);
+
         log.info("Prescription deleted successfully!");
+    }
+
+    @RequestMapping("/{prescriptionSeries}")
+    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String prescriptionSeries,@RequestParam(required = false) String CNP){
+        if(CNP!=null){
+            return prescriptionMongoRepository.findAllByPrescriptionSeriesAndCNP(prescriptionSeries,CNP);
+        }
+        return prescriptionMongoRepository.findAllByPrescriptionSeries(prescriptionSeries);
     }
 }
