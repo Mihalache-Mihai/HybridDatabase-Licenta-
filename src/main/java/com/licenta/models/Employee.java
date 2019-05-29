@@ -1,8 +1,7 @@
 package com.licenta.models;
 
-import com.licenta.utils.Roles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,7 +33,5 @@ public class Employee implements Serializable {
     @Column(name="cnp",unique = true)
     private String cnp;
 
-    @Column(name="role")
-    private Roles role;
 
 }

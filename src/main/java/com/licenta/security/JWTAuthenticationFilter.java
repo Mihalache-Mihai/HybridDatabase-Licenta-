@@ -16,8 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.licenta.security.SecurityConstants.*;
@@ -28,12 +27,19 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+
+
+        //this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(jwtConfig.getUri(), "POST"));
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
-            Credentials credentials = new ObjectMapper().readValue(req.getInputStream(), Credentials.class);
+            //ServletInputStream servletInputStream = req.getInputStream();
+            ObjectMapper objectMapper = new ObjectMapper();
+            //objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            Credentials credentials = objectMapper.readValue(req.getInputStream(), Credentials.class);
+
 
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     credentials.getUsername(),
@@ -53,8 +59,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     ) throws IOException, ServletException {
         String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
+                //.withSubject(auth.getDetails())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        res.getWriter().write("\"" + token + "\"");
+
     }
 }

@@ -52,10 +52,7 @@ public class EmployeeController {
             existingEmployee.setSalary(employee.getSalary());
             log.info("Employee salary updated successfully");
         }
-        if(employee.getRole()!=null){
-            existingEmployee.setRole(employee.getRole());
-            log.info("Employee role updated successfully!");
-        }
+
         employeeRepository.save(existingEmployee);
         log.info("Employee updated successfully!");
     }

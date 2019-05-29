@@ -5,6 +5,8 @@ import com.licenta.models.Employee;
 import com.licenta.repository.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,11 +28,17 @@ public class UserController {
     }
 
     @PostMapping("sign-up")
-    public void signUp(@RequestBody Employee employee){
+    public Employee signUp(@RequestBody Employee employee){
         employee.getCredentials().setPassword(bCryptPasswordEncoder.encode(employee.getCredentials().getPassword()));
         employee.getCredentials().setEmployee(employee);
+        if(employeeRepository.findByCredentials_Username(employee.getCredentials().getUsername())!=null){
+            return null;
+        }
         employeeRepository.save(employee);
+
         log.info("Employee signed up successfully!");
+        return employee;
     }
+
 
 }
