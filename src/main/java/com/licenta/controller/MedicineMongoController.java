@@ -18,6 +18,6 @@ public class MedicineMongoController {
 
     @RequestMapping("/{name}")
     public List<MedicineMongo> findAllByName(@PathVariable String name){
-        return medicineMongoRepository.findAllByName(name);
+        return medicineMongoRepository.findByNameContaining(name);
     }
 }

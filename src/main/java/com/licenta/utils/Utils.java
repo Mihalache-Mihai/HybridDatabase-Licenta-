@@ -8,6 +8,7 @@ public class Utils {
         MedicineMongo medicineMongo = new MedicineMongo();
         medicineMongo.setId(medicine.getId().toString());
         medicineMongo.setName(medicine.getName());
+        medicineMongo.setStock(medicine.getStock());
         medicineMongo.setProspect(medicine.getProspect());
         return medicineMongo;
     }

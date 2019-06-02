@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
         //@Query(value="SELECT u from Medicine u where u.name = ?1 ")
-        List<Medicine> findByName (String name);
+        List<Medicine> findByNameContaining (String name);
 }

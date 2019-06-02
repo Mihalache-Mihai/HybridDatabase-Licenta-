@@ -32,6 +32,9 @@ public class MedicineController {
 
     @PostMapping
     public void addMedicine(@RequestBody Medicine medicine) {
+        String name=medicine.getName();
+        String newName=name.toLowerCase();
+        medicine.setName(newName);
         medicineRepository.save(medicine);
         log.info("Medicine saved successfully!");
 
@@ -56,6 +59,11 @@ public class MedicineController {
         if (medicine.getProspect() != null) {
             existingMedicine.setProspect(medicine.getProspect());
             log.info("Medicine prospect updated successfully!");
+
+        }
+        if(medicine.getStock() !=null){
+            existingMedicine.setStock(medicine.getStock());
+            log.info("Medicine stock updated");
         }
         medicineRepository.save(existingMedicine);
         log.info("Medicine updated successfully!");
@@ -78,7 +86,7 @@ public class MedicineController {
 
     @RequestMapping("/{name}")
     public List<Medicine> findByName(@PathVariable String name){
-        return medicineRepository.findByName(name);
+        return medicineRepository.findByNameContaining(name);
     }
 
 
