@@ -1,7 +1,9 @@
 package com.licenta.controller;
 
+import com.licenta.models.Company;
 import com.licenta.models.Medicine;
 import com.licenta.models.MedicineMongo;
+import com.licenta.repository.CompanyRepository;
 import com.licenta.repository.MedicineMongoRepository;
 import com.licenta.repository.MedicineRepository;
 import com.licenta.utils.Utils;
@@ -24,10 +26,13 @@ public class MedicineController {
 
     private final MedicineMongoRepository medicineMongoRepository;
 
+    private final CompanyRepository companyRepository;
+
     @Autowired
-    public MedicineController(MedicineRepository medicineRepository, MedicineMongoRepository medicineMongoRepository) {
+    public MedicineController(MedicineRepository medicineRepository, MedicineMongoRepository medicineMongoRepository,CompanyRepository companyRepository) {
         this.medicineRepository = medicineRepository;
         this.medicineMongoRepository = medicineMongoRepository;
+        this.companyRepository = companyRepository;
     }
 
     @PostMapping
@@ -35,6 +40,11 @@ public class MedicineController {
         String name=medicine.getName();
         String newName=name.toLowerCase();
         medicine.setName(newName);
+        if(medicine.getCompany().getCompanyName()!=null){
+            Company medicineCompany = companyRepository.findCompanyByCompanyName(medicine.getCompany().getCompanyName());
+            medicine.setCompany(medicineCompany);
+        }
+
         medicineRepository.save(medicine);
         log.info("Medicine saved successfully!");
 
@@ -48,6 +58,11 @@ public class MedicineController {
         return medicineRepository.findAll();
     }
 
+    @GetMapping(value = "/byID/{id}")
+    public Medicine getMedicineByID(@PathVariable long id){
+        return medicineRepository.getMedicineById(id);
+    }
+
     @PutMapping(value = "/{id}")
     public void editMedicine(@PathVariable long id, @RequestBody Medicine medicine) {
         Medicine existingMedicine = medicineRepository.findById(id).orElse(null);
@@ -55,11 +70,6 @@ public class MedicineController {
         if (medicine.getCompany() != null) {
             existingMedicine.setCompany(medicine.getCompany());
             log.info("Medicine company updated successfully!");
-        }
-        if (medicine.getProspect() != null) {
-            existingMedicine.setProspect(medicine.getProspect());
-            log.info("Medicine prospect updated successfully!");
-
         }
         if(medicine.getStock() !=null){
             existingMedicine.setStock(medicine.getStock());
@@ -86,6 +96,7 @@ public class MedicineController {
 
     @RequestMapping("/{name}")
     public List<Medicine> findByName(@PathVariable String name){
+        //String newName = name.toLowerCase();
         return medicineRepository.findByNameContaining(name);
     }
 

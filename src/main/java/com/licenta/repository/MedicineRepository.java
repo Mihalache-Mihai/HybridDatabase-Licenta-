@@ -10,4 +10,6 @@ import java.util.List;
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
         //@Query(value="SELECT u from Medicine u where u.name = ?1 ")
         List<Medicine> findByNameContaining (String name);
+
+        Medicine getMedicineById(long id);
 }

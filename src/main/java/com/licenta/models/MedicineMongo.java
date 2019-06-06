@@ -24,7 +24,13 @@ public class MedicineMongo {
     @Indexed
     private String name;
 
+
+    private String company;
+
+
     private Integer stock;
 
-    private Map<String,String> prospect=new HashMap<>();
+
+
+//    private Map<String,String> prospect=new HashMap<>();
 }

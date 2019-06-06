@@ -26,12 +26,12 @@ public class Medicine implements Serializable {
     @Column(name="name")
     private String name;
 
-    @Type(type="hstore")
-    @Column(columnDefinition = "hstore")
-    private Map<String,String> prospect=new HashMap<>();
+//    @Type(type="hstore")
+//    @Column(columnDefinition = "hstore")
+//    private Map<String,String> prospect=new HashMap<>();
 
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "company_id",nullable = false)
     private Company company;
 

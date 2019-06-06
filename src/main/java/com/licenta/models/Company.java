@@ -24,15 +24,15 @@ public class Company implements Serializable{
     @Column(name="cui",unique = true)
     private String CUI;
 
-    @Column(name="companyName")
+    @Column(name="companyName",unique = true)
     private String companyName;
 
     @Column
     @JsonIgnore
     @OneToMany(
-            mappedBy = "company",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "company"
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true
     )
     private List<Medicine> medicines = new ArrayList<>();
 

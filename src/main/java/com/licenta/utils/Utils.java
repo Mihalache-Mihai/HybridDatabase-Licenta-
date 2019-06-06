@@ -9,7 +9,8 @@ public class Utils {
         medicineMongo.setId(medicine.getId().toString());
         medicineMongo.setName(medicine.getName());
         medicineMongo.setStock(medicine.getStock());
-        medicineMongo.setProspect(medicine.getProspect());
+        medicineMongo.setCompany(medicine.getCompany().getCompanyName());
+       // medicineMongo.setProspect(medicine.getProspect());
         return medicineMongo;
     }
 }
