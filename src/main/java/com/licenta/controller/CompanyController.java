@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/company")
 public class CompanyController {
@@ -56,5 +58,15 @@ public class CompanyController {
     public void deleteCompany(@PathVariable long id) {
         companyRepository.findById(id).ifPresent(companyRepository::delete);
         log.info("Company with id " + id + " deleted successfully!");
+    }
+
+    @GetMapping("/{name}")
+    public List<Company> findAllCompaniesContaining(@PathVariable  String name){
+        return companyRepository.findAllByCompanyNameContaining(name);
+    }
+
+    @GetMapping("/byID/{id}")
+    public Company getCompanyByID(@PathVariable long id){
+        return companyRepository.getById(id);
     }
 }

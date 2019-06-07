@@ -8,5 +8,5 @@ import java.util.List;
 public interface MedicineMongoRepository extends MongoRepository<MedicineMongo, String> {
     List<MedicineMongo> findByNameContaining (String name);
 
-    //MedicineMongo getMedicineMongoById(String medicineID);
+    MedicineMongo getMedicineMongoById(String medicineID);
 }

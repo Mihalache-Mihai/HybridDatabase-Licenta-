@@ -20,6 +20,7 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private String id;
 
+    @Column(name="series",unique = true)
     private String prescriptionSeries;
 
     private String locality;
@@ -34,5 +35,5 @@ public class Prescription {
 
     private String diagnosis;
 
-    private Map<String, String> medicines;
+    private String medicines;
 }

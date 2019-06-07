@@ -20,4 +20,10 @@ public class MedicineMongoController {
     public List<MedicineMongo> findAllByName(@PathVariable String name){
         return medicineMongoRepository.findByNameContaining(name);
     }
+
+    @GetMapping("/byID/{id}")
+    public MedicineMongo getMongoMedicineByID(@PathVariable long id){
+        String idMongo = Long.toString(id);
+        return medicineMongoRepository.getMedicineMongoById(idMongo);
+    }
 }

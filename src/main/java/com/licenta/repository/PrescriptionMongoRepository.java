@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface PrescriptionMongoRepository extends MongoRepository<Prescription,String> {
     List<Prescription> findAllByPrescriptionSeriesAndCNP(String prescriptionSeries, String CNP);
-    List<Prescription> findAllByPrescriptionSeries(String prescriptionSeries);
+    Prescription findByPrescriptionSeries(String prescriptionSeries);
+
+    List<Prescription> findAllByNameContaining(String name);
 }

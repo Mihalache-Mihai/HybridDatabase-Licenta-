@@ -29,15 +29,20 @@ public class PrescriptionController {
         log.info("Prescription saved successfully!");
     }
 
+    @GetMapping("/{name}")
+    public List<Prescription> getPrescriptionByNameContaining(@PathVariable String name){
+        return prescriptionMongoRepository.findAllByNameContaining(name);
+    }
+
     @GetMapping
     public Iterable<Prescription> getPrescriptions() {
         return prescriptionMongoRepository.findAll();
     }
-
-    @PutMapping(value = "/{id}")
-    public void editPrescription(@PathVariable long id, @RequestBody Prescription prescription) {
-        String idMongo = String.valueOf(id);
-        Prescription existingPrescription = prescriptionMongoRepository.findById(idMongo).orElse(null);
+//@TODO baga si aici un query mai complex poate
+    @PutMapping(value = "/{series}")
+    public void editPrescription(@PathVariable String series, @RequestBody Prescription prescription) {
+      //  String idMongo = String.valueOf(id);
+        Prescription existingPrescription = prescriptionMongoRepository.findByPrescriptionSeries(series);
         Assert.notNull(prescription, "Prescription not found");
         if (prescription.getCNP() != null) {
             existingPrescription.setCNP(prescription.getCNP());
@@ -76,24 +81,34 @@ public class PrescriptionController {
     }
 
 
-    @DeleteMapping("/{prescriptionSeries}")
-    public void deletePrescription(@PathVariable String prescriptionSeries) {
-        Iterable<Prescription> list = prescriptionMongoRepository.findAll();
-        for (Prescription p : list) {
-            if (p.getPrescriptionSeries().equals(prescriptionSeries)) {
-                prescriptionMongoRepository.delete(p);
-                break;
-            }
+    @DeleteMapping("/{series}")
+    public void deletePrescription(@PathVariable String series) {
+//        Iterable<Prescription> list = prescriptionMongoRepository.findAll();
+//        for (Prescription p : list) {
+//            if (p.getPrescriptionSeries().equals(prescriptionSeries)) {
+//                prescriptionMongoRepository.delete(p);
+//                break;
+//            }
+//        }
+        Prescription p = prescriptionMongoRepository.findByPrescriptionSeries(series);
+        if(p!=null){
+            prescriptionMongoRepository.delete(p);
         }
 
         log.info("Prescription deleted successfully!");
     }
 
-    @RequestMapping("/{prescriptionSeries}")
-    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String prescriptionSeries,@RequestParam(required = false) String CNP){
-        if(CNP!=null){
-            return prescriptionMongoRepository.findAllByPrescriptionSeriesAndCNP(prescriptionSeries,CNP);
-        }
-        return prescriptionMongoRepository.findAllByPrescriptionSeries(prescriptionSeries);
+    //@TODO query mai complex pentru chestia asta
+ //   @RequestMapping("/{prescriptionSeries}")
+//    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String prescriptionSeries,@RequestParam(required = false) String CNP){
+//        if(CNP!=null){
+//            return prescriptionMongoRepository.findAllByPrescriptionSeriesAndCNP(prescriptionSeries,CNP);
+//        }
+//        //return prescriptionMongoRepository.findAllByPrescriptionSeries(prescriptionSeries);
+//    }
+
+    @GetMapping("/bySeries/{series}")
+    public Prescription getPrescriptionBySeries(@PathVariable String series){
+        return prescriptionMongoRepository.findByPrescriptionSeries(series);
     }
 }
