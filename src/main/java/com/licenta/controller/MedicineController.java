@@ -60,13 +60,20 @@ public class MedicineController {
 
     @GetMapping(value = "/byID/{id}")
     public Medicine getMedicineByID(@PathVariable long id){
-        return medicineRepository.getMedicineById(id);
+        Medicine medicine = medicineRepository.getMedicineById(id);
+        medicine.getCompany();
+        return medicine;
     }
 
     @PutMapping(value = "/{id}")
     public void editMedicine(@PathVariable long id, @RequestBody Medicine medicine) {
         Medicine existingMedicine = medicineRepository.findById(id).orElse(null);
-        Assert.notNull(medicine, "Medicine not found!");
+        Assert.notNull(existingMedicine,"Medicine not found");
+        Assert.notNull(medicine, "Invalid input!");
+        if(medicine.getName()!=null){
+            existingMedicine.setName(medicine.getName());
+            log.info("Medicine name updated successfully");
+        }
         if (medicine.getCompany() != null) {
             existingMedicine.setCompany(medicine.getCompany());
             log.info("Medicine company updated successfully!");
@@ -75,7 +82,7 @@ public class MedicineController {
             existingMedicine.setStock(medicine.getStock());
             log.info("Medicine stock updated");
         }
-        medicineRepository.save(existingMedicine);
+        medicineRepository.saveAndFlush(existingMedicine);
         log.info("Medicine updated successfully!");
 
         MedicineMongo medicineMongo = utils.toMongoMedicine(existingMedicine);

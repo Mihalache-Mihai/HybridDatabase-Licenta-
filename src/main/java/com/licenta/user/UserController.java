@@ -27,7 +27,7 @@ public class UserController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @PostMapping("sign-up")
+    @PostMapping("/sign-up")
     public Employee signUp(@RequestBody Employee employee){
         employee.getCredentials().setPassword(bCryptPasswordEncoder.encode(employee.getCredentials().getPassword()));
         employee.getCredentials().setEmployee(employee);

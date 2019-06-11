@@ -1,6 +1,7 @@
 package com.licenta.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
 import lombok.Data;
 import lombok.ToString;
@@ -17,6 +18,7 @@ import java.util.Map;
 @Entity
 @Data
 @TypeDef(name="hstore",typeClass = PostgreSQLHStoreType.class)
+
 public class Medicine implements Serializable {
 
     @Id
@@ -26,13 +28,8 @@ public class Medicine implements Serializable {
     @Column(name="name")
     private String name;
 
-//    @Type(type="hstore")
-//    @Column(columnDefinition = "hstore")
-//    private Map<String,String> prospect=new HashMap<>();
-
-
-    @ManyToOne()
-    @JoinColumn(name = "company_id",nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     @Column(name="stock")

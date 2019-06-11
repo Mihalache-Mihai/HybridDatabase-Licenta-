@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @TypeDef(name="hstore",typeClass = PostgreSQLHStoreType.class)
 @Document
-public class MedicineMongo {
+public class MedicineMongo implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

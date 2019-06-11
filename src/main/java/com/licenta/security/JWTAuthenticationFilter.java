@@ -35,9 +35,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
-            //ServletInputStream servletInputStream = req.getInputStream();
             ObjectMapper objectMapper = new ObjectMapper();
-            //objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             Credentials credentials = objectMapper.readValue(req.getInputStream(), Credentials.class);
 
 
@@ -59,7 +57,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     ) throws IOException, ServletException {
         String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
-                //.withSubject(auth.getDetails())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);

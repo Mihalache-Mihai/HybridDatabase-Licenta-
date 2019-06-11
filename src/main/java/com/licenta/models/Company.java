@@ -1,6 +1,7 @@
 package com.licenta.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Company implements Serializable{
 
     @Id
@@ -29,11 +31,7 @@ public class Company implements Serializable{
 
     @Column
     @JsonIgnore
-    @OneToMany(
-            mappedBy = "company"
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "company")
     private List<Medicine> medicines = new ArrayList<>();
 
     @Override

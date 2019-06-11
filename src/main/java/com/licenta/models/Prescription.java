@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Map;
 
 @Data
@@ -14,7 +15,7 @@ import java.util.Map;
 @CompoundIndexes({
         @CompoundIndex(name = "prescription_series", def="{'prescriptionSeries': 1, 'CNP': 1}")
 })
-public class Prescription {
+public class Prescription implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
