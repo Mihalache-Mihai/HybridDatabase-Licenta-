@@ -12,4 +12,6 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
         List<Medicine> findByNameContaining (String name);
 
         Medicine getMedicineById(long id);
+
+        List<Medicine> findAllByCompany_CUIOrderByNameAsc(String CUI);
 }

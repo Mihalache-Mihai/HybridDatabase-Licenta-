@@ -28,10 +28,8 @@ public class MedicineMongo implements Serializable{
 
     private String company;
 
-
+    @Indexed
     private Integer stock;
 
 
-
-//    private Map<String,String> prospect=new HashMap<>();
 }

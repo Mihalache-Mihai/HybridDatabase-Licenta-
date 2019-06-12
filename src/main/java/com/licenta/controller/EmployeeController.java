@@ -64,4 +64,9 @@ public class EmployeeController {
         log.info("Employee with id " + id + " deleted successfully!");
     }
 
+    @GetMapping("/findBy/{username}")
+    public Employee findByUsername(@PathVariable  String username){
+        return employeeRepository.findByCredentials_Username(username);
+    }
+
 }

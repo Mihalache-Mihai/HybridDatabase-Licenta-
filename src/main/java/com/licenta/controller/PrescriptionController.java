@@ -38,7 +38,8 @@ public class PrescriptionController {
     public Iterable<Prescription> getPrescriptions() {
         return prescriptionMongoRepository.findAll();
     }
-//@TODO baga si aici un query mai complex poate
+
+
     @PutMapping(value = "/{series}")
     public void editPrescription(@PathVariable String series, @RequestBody Prescription prescription) {
       //  String idMongo = String.valueOf(id);
@@ -98,14 +99,11 @@ public class PrescriptionController {
         log.info("Prescription deleted successfully!");
     }
 
-    //@TODO query mai complex pentru chestia asta
- //   @RequestMapping("/{prescriptionSeries}")
-//    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String prescriptionSeries,@RequestParam(required = false) String CNP){
-//        if(CNP!=null){
-//            return prescriptionMongoRepository.findAllByPrescriptionSeriesAndCNP(prescriptionSeries,CNP);
-//        }
-//        //return prescriptionMongoRepository.findAllByPrescriptionSeries(prescriptionSeries);
-//    }
+
+    @RequestMapping("/{name}/{county}")
+    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String name, @PathVariable String county){
+        return prescriptionMongoRepository.findPrescriptionByNameAndCounty(name,county);
+    }
 
     @GetMapping("/bySeries/{series}")
     public Prescription getPrescriptionBySeries(@PathVariable String series){

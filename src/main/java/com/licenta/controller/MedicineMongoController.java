@@ -26,4 +26,10 @@ public class MedicineMongoController {
         String idMongo = Long.toString(id);
         return medicineMongoRepository.getMedicineMongoById(idMongo);
     }
+
+    @GetMapping("/{name}/{stock}")
+    public List<MedicineMongo> findAllMedicinesByNameAndStock(@PathVariable String name, @PathVariable Integer stock){
+
+        return medicineMongoRepository.findAllByNameAndStock(name,stock);
+    }
 }

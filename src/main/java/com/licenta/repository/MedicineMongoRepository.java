@@ -9,4 +9,6 @@ public interface MedicineMongoRepository extends MongoRepository<MedicineMongo, 
     List<MedicineMongo> findByNameContaining (String name);
 
     MedicineMongo getMedicineMongoById(String medicineID);
+
+    List<MedicineMongo> findAllByNameAndStock(String name, Integer stock);
 }

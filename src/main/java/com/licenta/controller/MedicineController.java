@@ -107,5 +107,10 @@ public class MedicineController {
         return medicineRepository.findByNameContaining(name);
     }
 
+    @GetMapping("/findAllBy/{CUI}")
+    public List<Medicine> findAllByCompanyCUIOrderByAsc(@PathVariable String CUI){
+        return medicineRepository.findAllByCompany_CUIOrderByNameAsc(CUI);
+    }
+
 
 }
