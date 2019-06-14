@@ -1,6 +1,7 @@
 package com.licenta.controller;
 
 import com.licenta.models.Company;
+import com.licenta.models.Medicine;
 import com.licenta.repository.CompanyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,6 +28,23 @@ public class CompanyController {
     public void addCompany(@RequestBody Company company) {
         companyRepository.save(company);
         log.info("Company added successfully!");
+    }
+
+    @PostMapping("/add")
+    public void populate(){
+
+        for(int i=0;i<3000;i++){
+            Company c = new Company();
+            String CUI = "12222221"+i;
+            String name="mockName";
+            List<Medicine> medicines = new ArrayList<>();
+            c.setCUI(CUI);
+            c.setCompanyName(name);
+            c.setMedicines(medicines);
+            companyRepository.save(c);
+            log.info("Company saved: " +CUI);
+        }
+
     }
 
     @GetMapping

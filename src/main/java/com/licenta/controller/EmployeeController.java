@@ -1,5 +1,6 @@
 package com.licenta.controller;
 
+import com.licenta.models.Credentials;
 import com.licenta.models.Employee;
 import com.licenta.repository.EmployeeRepository;
 import org.slf4j.Logger;
@@ -25,6 +26,35 @@ public class EmployeeController {
     @GetMapping
     public Iterable<Employee> getCompanies() {
         return employeeRepository.findAll();
+    }
+
+    @PostMapping("/add")
+    public void populate(){
+        Credentials c =new Credentials();
+
+        String password ="Mock password";
+
+        c.setPassword(password);
+        for(int i=0;i<3000;i++){
+            String username = "Mock username second"+i;
+            c.setUsername(username);
+            Employee e = new Employee();
+            String firstName = "mockName"+i;
+            String lastName = "mockLastName";
+            String email = "mockMailSecondTry"+i+"@yahoo.com";
+            String CNP = "1234555512990"+i;
+            Integer salary = 1243;
+
+            e.setCredentials(c);
+            e.setFirstName(firstName);
+            e.setLastName(lastName);
+            e.setEmail(email);
+            e.setCnp(CNP);
+            e.setSalary(salary);
+
+            employeeRepository.save(e);
+            log.info("Employee saved: "+ firstName);
+        }
     }
 
 

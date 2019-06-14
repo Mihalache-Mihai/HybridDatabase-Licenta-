@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,24 @@ public class MedicineController {
         this.medicineRepository = medicineRepository;
         this.medicineMongoRepository = medicineMongoRepository;
         this.companyRepository = companyRepository;
+    }
+
+
+    @PostMapping("/add")
+    public void populate(){
+        Company c = companyRepository.getById(128);
+        for(int i=0;i<30000;i++){
+            Medicine m = new Medicine();
+            String name= "Mock data4" +i;
+            m.setName(name);
+            m.setCompany(c);
+            Integer stock = 2019;
+            m.setStock(stock);
+            medicineRepository.save(m);
+            MedicineMongo mm = utils.toMongoMedicine(m);
+            medicineMongoRepository.save(mm);
+            log.info("Medicine saved: "+  name);
+        }
     }
 
     @PostMapping
@@ -104,7 +123,15 @@ public class MedicineController {
     @RequestMapping("/{name}")
     public List<Medicine> findByName(@PathVariable String name){
         //String newName = name.toLowerCase();
-        return medicineRepository.findByNameContaining(name);
+        //return medicineRepository.findByNameContaining(name);
+
+        List<Medicine> medicinesList = new ArrayList<>();
+        long start_time = System.nanoTime();
+        medicinesList = medicineRepository.findByNameContaining(name);
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+        log.info("Time relational is: "+ Long.toString(duration));
+        return medicinesList;
     }
 
     @GetMapping("/findAllBy/{CUI}")

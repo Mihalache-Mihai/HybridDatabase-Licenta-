@@ -22,6 +22,32 @@ public class PrescriptionController {
         this.prescriptionMongoRepository = prescriptionMongoRepository;
     }
 
+    @PostMapping("/add")
+    public void populate(){
+        for(int i=0;i<3000;i++){
+            String prescriptionSeries = "210"+i;
+            String county = "mockCounty"+i;
+            String locality = "mockLocality"+i;
+            String CNP = "12345"+i;
+            String name= "mockName";
+            String residence = "mockResidence"+i;
+            String diagnosis = "mockDiagnosis";
+            String medicines = "mockMedicines"+i;
+            Prescription p= new Prescription();
+            p.setPrescriptionSeries(prescriptionSeries);
+            p.setResidence(residence);
+            p.setName(name);
+            p.setCounty(county);
+            p.setLocality(locality);
+            p.setCNP(CNP);
+            p.setDiagnosis(diagnosis);
+            p.setMedicines(medicines);
+
+            prescriptionMongoRepository.save(p);
+            log.info("prescription saved"+county);
+        }
+    }
+
     @PostMapping
     public void addPrescription(@RequestBody Prescription prescription) {
         Assert.notNull(prescription, "Prescription is null");
