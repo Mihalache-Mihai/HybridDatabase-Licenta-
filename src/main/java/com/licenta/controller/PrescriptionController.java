@@ -22,18 +22,69 @@ public class PrescriptionController {
         this.prescriptionMongoRepository = prescriptionMongoRepository;
     }
 
-    @PostMapping("/add")
-    public void populate(){
-        for(int i=0;i<3000;i++){
-            String prescriptionSeries = "210"+i;
-            String county = "mockCounty"+i;
-            String locality = "mockLocality"+i;
-            String CNP = "12345"+i;
-            String name= "mockName";
-            String residence = "mockResidence"+i;
+//    @PostMapping("/add")
+//    public void populate(){
+//        for(int i=0;i<20;i++){
+//            String prescriptionSeries = "21012"+i;
+//            String county = "brasov";
+//            String locality = "mockLocality"+i;
+//            String CNP = "12345"+i;
+//            String name= "mihai";
+//            String residence = "mockResidence"+i;
+//            String diagnosis = "mockDiagnosis";
+//            String medicines = "mockMedicines"+i;
+//            Prescription p= new Prescription();
+//            p.setPrescriptionSeries(prescriptionSeries);
+//            p.setResidence(residence);
+//            p.setName(name);
+//            p.setCounty(county);
+//            p.setLocality(locality);
+//            p.setCNP(CNP);
+//            p.setDiagnosis(diagnosis);
+//            p.setMedicines(medicines);
+//
+//            prescriptionMongoRepository.save(p);
+//            log.info("prescription saved"+locality);
+//        }
+//        for(int i=0;i<2000000;i++){
+//            String prescriptionSeries = "3"+i;
+//            String county = "mockCounty"+i;
+//            String locality = "mockLocality"+i;
+//            String CNP = "12345"+i;
+//            String name= "mockName";
+//            String residence = "mockResidence"+i;
+//            String diagnosis = "mockDiagnosis";
+//            String medicines = "mockMedicines"+i;
+//            Prescription p= new Prescription();
+//            p.setPrescriptionSeries(prescriptionSeries);
+//            p.setResidence(residence);
+//            p.setName(name);
+//            p.setCounty(county);
+//            p.setLocality(locality);
+//            p.setCNP(CNP);
+//            p.setDiagnosis(diagnosis);
+//            p.setMedicines(medicines);
+//
+//            prescriptionMongoRepository.save(p);
+//            log.info("prescription saved"+county);
+//        }
+//
+//
+//    }
+
+
+    @PostMapping("/insert")
+    public void populate() {
+        for (int i = 0; i < 10000; i++) {
+            String prescriptionSeries = "presentationTest" + i;
+            String county = "cluj";
+            String locality = "mockLocality" + i;
+            String CNP = "12345" + i;
+            String name = "mihai";
+            String residence = "mockResidence" + i;
             String diagnosis = "mockDiagnosis";
-            String medicines = "mockMedicines"+i;
-            Prescription p= new Prescription();
+            String medicines = "mockMedicines" + i;
+            Prescription p = new Prescription();
             p.setPrescriptionSeries(prescriptionSeries);
             p.setResidence(residence);
             p.setName(name);
@@ -44,8 +95,9 @@ public class PrescriptionController {
             p.setMedicines(medicines);
 
             prescriptionMongoRepository.save(p);
-            log.info("prescription saved"+county);
+            log.info("prescription saved" + locality);
         }
+
     }
 
     @PostMapping
@@ -56,7 +108,7 @@ public class PrescriptionController {
     }
 
     @GetMapping("/{name}")
-    public List<Prescription> getPrescriptionByNameContaining(@PathVariable String name){
+    public List<Prescription> getPrescriptionByNameContaining(@PathVariable String name) {
         return prescriptionMongoRepository.findAllByNameContaining(name);
     }
 
@@ -68,7 +120,7 @@ public class PrescriptionController {
 
     @PutMapping(value = "/{series}")
     public void editPrescription(@PathVariable String series, @RequestBody Prescription prescription) {
-      //  String idMongo = String.valueOf(id);
+        //  String idMongo = String.valueOf(id);
         Prescription existingPrescription = prescriptionMongoRepository.findByPrescriptionSeries(series);
         Assert.notNull(prescription, "Prescription not found");
         if (prescription.getCNP() != null) {
@@ -118,21 +170,34 @@ public class PrescriptionController {
 //            }
 //        }
         Prescription p = prescriptionMongoRepository.findByPrescriptionSeries(series);
-        if(p!=null){
+        if (p != null) {
             prescriptionMongoRepository.delete(p);
         }
 
         log.info("Prescription deleted successfully!");
     }
 
+//    @RequestMapping("/byName/{name}")
+//    public List<Prescription> findAllByCounty(@PathVariable String name){
+//        List<Prescription> prescriptionList = new ArrayList<>();
+//        long start_time = System.nanoTime();
+//        prescriptionList = prescriptionMongoRepository.findAllByName(name);
+//        long end_time = System.nanoTime();
+//        long duration = end_time-start_time;
+//
+//        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+//        log.info("Time prescription is: "+ Double.toString(elapsedTimeInSecond));
+//
+//        return prescriptionList;
+//    }
 
     @RequestMapping("/{name}/{county}")
-    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String name, @PathVariable String county){
-        return prescriptionMongoRepository.findPrescriptionByNameAndCounty(name,county);
+    public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String name, @PathVariable String county) {
+        return prescriptionMongoRepository.findPrescriptionByNameAndCounty(name, county);
     }
 
     @GetMapping("/bySeries/{series}")
-    public Prescription getPrescriptionBySeries(@PathVariable String series){
+    public Prescription getPrescriptionBySeries(@PathVariable String series) {
         return prescriptionMongoRepository.findByPrescriptionSeries(series);
     }
 }

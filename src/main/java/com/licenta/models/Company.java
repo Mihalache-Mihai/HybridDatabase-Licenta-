@@ -26,7 +26,7 @@ public class Company implements Serializable{
     @Column(name="cui",unique = true)
     private String CUI;
 
-    @Column(name="companyName",unique = true)
+    @Column(name="companyName")
     private String companyName;
 
     @Column

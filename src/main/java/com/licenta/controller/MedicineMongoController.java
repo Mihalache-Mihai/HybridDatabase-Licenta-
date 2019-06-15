@@ -29,7 +29,9 @@ public class MedicineMongoController {
         medicinesList = medicineMongoRepository.findByNameContaining(name);
         long end_time = System.nanoTime();
         long duration = end_time-start_time;
-        log.info("Time non relational is: "+ Long.toString(duration));
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time non relational is: "+ Double.toString(elapsedTimeInSecond));
 
         return medicinesList;
 

@@ -39,7 +39,19 @@ public class MedicineController {
 
     @PostMapping("/add")
     public void populate(){
-        Company c = companyRepository.getById(128);
+            Company c = companyRepository.getById(11229);
+        for(int i=0;i<30;i++){
+            Medicine m = new Medicine();
+            String name= "test medicine" +i;
+            m.setName(name);
+            m.setCompany(c);
+            Integer stock = 2019;
+            m.setStock(stock);
+            medicineRepository.save(m);
+            MedicineMongo mm = utils.toMongoMedicine(m);
+            medicineMongoRepository.save(mm);
+            log.info("Medicine saved: "+  name);
+        }
         for(int i=0;i<30000;i++){
             Medicine m = new Medicine();
             String name= "Mock data4" +i;
@@ -130,13 +142,26 @@ public class MedicineController {
         medicinesList = medicineRepository.findByNameContaining(name);
         long end_time = System.nanoTime();
         long duration = end_time-start_time;
-        log.info("Time relational is: "+ Long.toString(duration));
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time relational is: "+ Double.toString(elapsedTimeInSecond));
         return medicinesList;
     }
 
     @GetMapping("/findAllBy/{CUI}")
     public List<Medicine> findAllByCompanyCUIOrderByAsc(@PathVariable String CUI){
-        return medicineRepository.findAllByCompany_CUIOrderByNameAsc(CUI);
+        //return medicineRepository.findAllByCompany_CUIOrderByNameAsc(CUI);
+
+        List<Medicine> list = new ArrayList<>();
+        long start_time = System.nanoTime();
+        list = medicineRepository.findAllByCompany_CUIOrderByNameAsc(CUI);
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time medicines is: "+ Double.toString(elapsedTimeInSecond));
+
+
+        return list;
     }
 
 

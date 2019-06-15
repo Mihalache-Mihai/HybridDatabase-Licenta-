@@ -11,4 +11,6 @@ public interface PrescriptionMongoRepository extends MongoRepository<Prescriptio
     Prescription findByPrescriptionSeries(String prescriptionSeries);
 
     List<Prescription> findAllByNameContaining(String name);
+
+    List<Prescription> findAllByName(String name);
 }

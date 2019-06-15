@@ -30,13 +30,13 @@ public class CompanyController {
         log.info("Company added successfully!");
     }
 
-    @PostMapping("/add")
+    @PostMapping("/insert")
     public void populate(){
 
-        for(int i=0;i<3000;i++){
+        for(int i=0;i<300000;i++){
             Company c = new Company();
-            String CUI = "12222221"+i;
-            String name="mockName";
+            String CUI = "123998777662"+i;
+            String name="mockCompany";
             List<Medicine> medicines = new ArrayList<>();
             c.setCUI(CUI);
             c.setCompanyName(name);
@@ -46,6 +46,23 @@ public class CompanyController {
         }
 
     }
+
+//    @PostMapping("/add")
+//    public void populate(){
+//
+//        for(int i=0;i<300000;i++){
+//            Company c = new Company();
+//            String CUI = "1123123123123"+i;
+//            String name="mockCompany";
+//            List<Medicine> medicines = new ArrayList<>();
+//            c.setCUI(CUI);
+//            c.setCompanyName(name);
+//            c.setMedicines(medicines);
+//            companyRepository.save(c);
+//            log.info("Company saved: " +CUI);
+//        }
+
+ //   }
 
     @GetMapping
     public Iterable<Company> getCompanies() {

@@ -35,6 +35,8 @@ public class Medicine implements Serializable {
     @Column(name="stock")
     private Integer stock;
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
