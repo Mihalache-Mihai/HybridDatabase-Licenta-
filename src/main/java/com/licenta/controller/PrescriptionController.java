@@ -74,9 +74,11 @@ public class PrescriptionController {
 //    }
 
 
-    @PostMapping("/insert")
-    public void populate() {
-        for (int i = 0; i < 10000; i++) {
+    @GetMapping("/insert100k")
+    public Prescription populate() {
+        Prescription prescriptionReturn = new Prescription();
+        long start_time = System.nanoTime();
+        for (int i = 0; i < 100000; i++) {
             String prescriptionSeries = "presentationTest" + i;
             String county = "cluj";
             String locality = "mockLocality" + i;
@@ -98,14 +100,32 @@ public class PrescriptionController {
             prescriptionMongoRepository.save(p);
             log.info("prescription saved" + locality);
         }
+        long end_time = System.nanoTime();
+        long duration = end_time - start_time;
+        log.info("Time is: " + Long.toString(duration));
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        prescriptionReturn.setResponseTime("Time for insert was:" + Double.toString(elapsedTimeInSecond)+" seconds");
+        return prescriptionReturn;
 
     }
 
     @PostMapping
-    public void addPrescription(@RequestBody Prescription prescription) {
+    public Prescription addPrescription(@RequestBody Prescription prescription) {
+        Prescription p = new Prescription();
         Assert.notNull(prescription, "Prescription is null");
+        long start_time = System.nanoTime();
         prescriptionMongoRepository.insert(prescription);
+
+
+        long end_time = System.nanoTime();
+        long duration = end_time - start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time prescription update is: " + Double.toString(elapsedTimeInSecond));
+        p.setResponseTime(Double.toString(elapsedTimeInSecond));
         log.info("Prescription saved successfully!");
+        return p;
     }
 
     @GetMapping("/{name}")
@@ -159,16 +179,17 @@ public class PrescriptionController {
         prescriptionMongoRepository.save(existingPrescription);
 
         long end_time = System.nanoTime();
-        long duration = end_time-start_time;
+        long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time prescription update is: "+ Double.toString(elapsedTimeInSecond));
+        log.info("Time prescription update is: " + Double.toString(elapsedTimeInSecond));
         log.info("Prescription saved successfully!");
     }
 
 
     @DeleteMapping("/{series}")
-    public void deletePrescription(@PathVariable String series) {
+    public Prescription deletePrescription(@PathVariable String series) {
+        Prescription prescriptionReturn = new Prescription();
         long start_time = System.nanoTime();
 
         Prescription p = prescriptionMongoRepository.findByPrescriptionSeries(series);
@@ -176,12 +197,13 @@ public class PrescriptionController {
             prescriptionMongoRepository.delete(p);
         }
         long end_time = System.nanoTime();
-        long duration = end_time-start_time;
+        long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time prescription delete is: "+ Double.toString(elapsedTimeInSecond));
-
+        log.info("Time prescription delete is: " + Double.toString(elapsedTimeInSecond));
+        p.setResponseTime(Double.toString(elapsedTimeInSecond));
         log.info("Prescription deleted successfully!");
+        return prescriptionReturn;
     }
 
 //    @RequestMapping("/byName/{name}")
@@ -202,14 +224,14 @@ public class PrescriptionController {
     public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String name, @PathVariable String county) {
         List<Prescription> list = new ArrayList<>();
         long start_time = System.nanoTime();
-        list= prescriptionMongoRepository.findPrescriptionByNameAndCounty(name, county);
+        list = prescriptionMongoRepository.findPrescriptionByNameAndCounty(name, county);
         long end_time = System.nanoTime();
-        long duration = end_time-start_time;
+        long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time medicines is: "+ Double.toString(elapsedTimeInSecond));
+        log.info("Time medicines is: " + Double.toString(elapsedTimeInSecond));
 
-        list.get(0).setResponseTime( Double.toString(elapsedTimeInSecond));
+        list.get(0).setResponseTime(Double.toString(elapsedTimeInSecond));
         return list;
     }
 

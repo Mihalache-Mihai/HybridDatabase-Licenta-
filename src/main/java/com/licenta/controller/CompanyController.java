@@ -31,29 +31,37 @@ public class CompanyController {
 
         Company companyReturn = new Company();
         long end_time = System.nanoTime();
-        long duration = end_time-start_time;
+        long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time company insert is: "+ Double.toString(elapsedTimeInSecond));
+        log.info("Time company insert is: " + Double.toString(elapsedTimeInSecond));
         companyReturn.setResponseTime(Double.toString(elapsedTimeInSecond));
         log.info("Company added successfully!");
         return companyReturn;
     }
 
-    @PostMapping("/insert")
-    public void populate(){
-
-        for(int i=0;i<300000;i++){
+    @GetMapping("/insert7k")
+    public Company populate() {
+        Company companyReturn = new Company();
+        long start_time = System.nanoTime();
+        for (int i = 0; i < 7000; i++) {
             Company c = new Company();
-            String CUI = "123998777662"+i;
-            String name="mockCompany";
+            String CUI = "123998777662" + i;
+            String name = "mockCompany";
             List<Medicine> medicines = new ArrayList<>();
             c.setCUI(CUI);
             c.setCompanyName(name);
             c.setMedicines(medicines);
             companyRepository.save(c);
-            log.info("Company saved: " +CUI);
+            log.info("Company saved: " + CUI);
         }
+        long end_time = System.nanoTime();
+        long duration = end_time - start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time for insert was: " + Double.toString(elapsedTimeInSecond) +" seconds");
+        companyReturn.setResponseTime("Time company insert is: "+ Double.toString(elapsedTimeInSecond));
+        return companyReturn;
 
     }
 
@@ -72,7 +80,7 @@ public class CompanyController {
 //            log.info("Company saved: " +CUI);
 //        }
 
- //   }
+    //   }
 
     @GetMapping
     public Iterable<Company> getCompanies() {
@@ -101,11 +109,11 @@ public class CompanyController {
         companyRepository.save(existingCompany);
         Company companyReturn = new Company();
         long end_time = System.nanoTime();
-        long duration = end_time-start_time;
+        long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time company update is: "+ Double.toString(elapsedTimeInSecond));
-        companyReturn.setResponseTime( Double.toString(elapsedTimeInSecond));
+        log.info("Time company update is: " + Double.toString(elapsedTimeInSecond));
+        companyReturn.setResponseTime(Double.toString(elapsedTimeInSecond));
         log.info("Company updated successfully!");
 
         return companyReturn;
@@ -118,10 +126,10 @@ public class CompanyController {
         long start_time = System.nanoTime();
         companyRepository.findById(id).ifPresent(companyRepository::delete);
         long end_time = System.nanoTime();
-        long duration = end_time-start_time;
+        long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time delete company is: "+ Double.toString(elapsedTimeInSecond));
+        log.info("Time delete company is: " + Double.toString(elapsedTimeInSecond));
         String responseTime = Double.toString(elapsedTimeInSecond);
 
         c.setResponseTime(responseTime);
@@ -130,12 +138,12 @@ public class CompanyController {
     }
 
     @GetMapping("/{name}")
-    public List<Company> findAllCompaniesContaining(@PathVariable  String name){
+    public List<Company> findAllCompaniesContaining(@PathVariable String name) {
         return companyRepository.findAllByCompanyNameContaining(name);
     }
 
     @GetMapping("/byID/{id}")
-    public Company getCompanyByID(@PathVariable long id){
+    public Company getCompanyByID(@PathVariable long id) {
         return companyRepository.getById(id);
     }
 }
