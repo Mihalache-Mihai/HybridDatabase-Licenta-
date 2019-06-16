@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -120,7 +121,7 @@ public class PrescriptionController {
 
     @PutMapping(value = "/{series}")
     public void editPrescription(@PathVariable String series, @RequestBody Prescription prescription) {
-        //  String idMongo = String.valueOf(id);
+        long start_time = System.nanoTime();
         Prescription existingPrescription = prescriptionMongoRepository.findByPrescriptionSeries(series);
         Assert.notNull(prescription, "Prescription not found");
         if (prescription.getCNP() != null) {
@@ -156,23 +157,29 @@ public class PrescriptionController {
             log.info("Prescription series updated successfully!");
         }
         prescriptionMongoRepository.save(existingPrescription);
+
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time prescription update is: "+ Double.toString(elapsedTimeInSecond));
         log.info("Prescription saved successfully!");
     }
 
 
     @DeleteMapping("/{series}")
     public void deletePrescription(@PathVariable String series) {
-//        Iterable<Prescription> list = prescriptionMongoRepository.findAll();
-//        for (Prescription p : list) {
-//            if (p.getPrescriptionSeries().equals(prescriptionSeries)) {
-//                prescriptionMongoRepository.delete(p);
-//                break;
-//            }
-//        }
+        long start_time = System.nanoTime();
+
         Prescription p = prescriptionMongoRepository.findByPrescriptionSeries(series);
         if (p != null) {
             prescriptionMongoRepository.delete(p);
         }
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time prescription delete is: "+ Double.toString(elapsedTimeInSecond));
 
         log.info("Prescription deleted successfully!");
     }
@@ -193,7 +200,17 @@ public class PrescriptionController {
 
     @RequestMapping("/{name}/{county}")
     public List<Prescription> findAllByPrescriptionAndCNP(@PathVariable String name, @PathVariable String county) {
-        return prescriptionMongoRepository.findPrescriptionByNameAndCounty(name, county);
+        List<Prescription> list = new ArrayList<>();
+        long start_time = System.nanoTime();
+        list= prescriptionMongoRepository.findPrescriptionByNameAndCounty(name, county);
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time medicines is: "+ Double.toString(elapsedTimeInSecond));
+
+        list.get(0).setResponseTime( Double.toString(elapsedTimeInSecond));
+        return list;
     }
 
     @GetMapping("/bySeries/{series}")

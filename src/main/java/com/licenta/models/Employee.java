@@ -33,6 +33,6 @@ public class Employee implements Serializable {
     @Column(name="cnp",unique = true)
     private String cnp;
 
-
+    private String responseTime;
 
 }

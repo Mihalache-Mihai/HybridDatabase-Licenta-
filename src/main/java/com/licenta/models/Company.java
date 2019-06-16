@@ -34,6 +34,8 @@ public class Company implements Serializable{
     @OneToMany(mappedBy = "company")
     private List<Medicine> medicines = new ArrayList<>();
 
+    private String responseTime;
+
     @Override
     public String toString() {
         return "";

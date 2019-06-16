@@ -52,6 +52,9 @@ public class MedicineMongoController {
         long duration = end_time-start_time;
         log.info("Time is: "+ Long.toString(duration));
 
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+
+        medicinesList.get(0).setResponseTime(Double.toString(elapsedTimeInSecond));
         return medicinesList;
 
     }

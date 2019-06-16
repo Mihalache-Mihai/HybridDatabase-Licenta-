@@ -9,7 +9,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "licenta2";
+        return "licenta3";
     }
 
     @Override

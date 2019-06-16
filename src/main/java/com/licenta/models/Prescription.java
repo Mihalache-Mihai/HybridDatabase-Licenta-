@@ -37,4 +37,6 @@ public class Prescription implements Serializable{
     private String diagnosis;
 
     private String medicines;
+
+    private String responseTime;
 }

@@ -60,6 +60,7 @@ public class EmployeeController {
 
     @PutMapping(value = "/{id}")
     public void editEmployee(@PathVariable long id, @RequestBody Employee employee) {
+
         Employee existingEmployee = employeeRepository.findById(id).orElse(null);
         Assert.notNull(existingEmployee, "Employee not found");
         if (employee.getCnp() != null) {
@@ -90,13 +91,23 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}")
     public void deleteEmployee(@PathVariable long id) {
+
         employeeRepository.findById(id).ifPresent(employeeRepository::delete);
         log.info("Employee with id " + id + " deleted successfully!");
     }
 
     @GetMapping("/findBy/{username}")
     public Employee findByUsername(@PathVariable  String username){
-        return employeeRepository.findByCredentials_Username(username);
+        Employee employee = new Employee();
+        long start_time = System.nanoTime();
+        employee= employeeRepository.findByCredentials_Username(username);
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time employee query is: "+ Double.toString(elapsedTimeInSecond));
+        employee.setResponseTime(Double.toString(elapsedTimeInSecond));
+        return employee;
     }
 
 }

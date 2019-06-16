@@ -25,9 +25,19 @@ public class CompanyController {
     }
 
     @PostMapping
-    public void addCompany(@RequestBody Company company) {
+    public Company addCompany(@RequestBody Company company) {
+        long start_time = System.nanoTime();
         companyRepository.save(company);
+
+        Company companyReturn = new Company();
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time company insert is: "+ Double.toString(elapsedTimeInSecond));
+        companyReturn.setResponseTime(Double.toString(elapsedTimeInSecond));
         log.info("Company added successfully!");
+        return companyReturn;
     }
 
     @PostMapping("/insert")
@@ -70,9 +80,12 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public void editCompany(@PathVariable long id, @RequestBody Company company) {
+    public Company editCompany(@PathVariable long id, @RequestBody Company company) {
         Company existingCompany = companyRepository.findById(id).orElse(null);
         Assert.notNull(existingCompany, "Company not found");
+        long start_time = System.nanoTime();
+
+
         if (company.getCompanyName() != null) {
             existingCompany.setCompanyName(company.getCompanyName());
             log.info("Company name updated!");
@@ -86,14 +99,34 @@ public class CompanyController {
             log.info("Company Medicines updated!");
         }
         companyRepository.save(existingCompany);
+        Company companyReturn = new Company();
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time company update is: "+ Double.toString(elapsedTimeInSecond));
+        companyReturn.setResponseTime( Double.toString(elapsedTimeInSecond));
         log.info("Company updated successfully!");
+
+        return companyReturn;
     }
 
 
     @DeleteMapping("/{id}")
-    public void deleteCompany(@PathVariable long id) {
+    public Company deleteCompany(@PathVariable long id) {
+        Company c = new Company();
+        long start_time = System.nanoTime();
         companyRepository.findById(id).ifPresent(companyRepository::delete);
+        long end_time = System.nanoTime();
+        long duration = end_time-start_time;
+
+        double elapsedTimeInSecond = (double) duration / 1_000_000_000;
+        log.info("Time delete company is: "+ Double.toString(elapsedTimeInSecond));
+        String responseTime = Double.toString(elapsedTimeInSecond);
+
+        c.setResponseTime(responseTime);
         log.info("Company with id " + id + " deleted successfully!");
+        return c;
     }
 
     @GetMapping("/{name}")

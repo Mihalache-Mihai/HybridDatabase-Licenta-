@@ -31,5 +31,7 @@ public class MedicineMongo implements Serializable{
     @Indexed
     private Integer stock;
 
+    private String responseTime;
+
 
 }

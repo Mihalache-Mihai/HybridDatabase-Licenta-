@@ -35,7 +35,7 @@ public class Medicine implements Serializable {
     @Column(name="stock")
     private Integer stock;
 
-
+    private String responseTime;
 
     @Override
     public boolean equals(Object o) {

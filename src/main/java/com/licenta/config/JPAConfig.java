@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @EnableJpaRepositories({"com.licenta.repository"})
 @EnableTransactionManagement
 public class JPAConfig {
-    @Value("${db.jdbcUrl}3")
+    @Value("${db.jdbcUrl}4")
     private String jdbcUrl;
 
     @Value("${db.username}")
