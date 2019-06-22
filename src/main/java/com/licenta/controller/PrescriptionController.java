@@ -79,7 +79,7 @@ public class PrescriptionController {
         Prescription prescriptionReturn = new Prescription();
         long start_time = System.nanoTime();
         for (int i = 0; i < 100000; i++) {
-            String prescriptionSeries = "presentationTest" + i;
+            String prescriptionSeries = "presentationTest0" + i;
             String county = "cluj";
             String locality = "mockLocality" + i;
             String CNP = "12345" + i;
@@ -105,7 +105,7 @@ public class PrescriptionController {
         log.info("Time is: " + Long.toString(duration));
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        prescriptionReturn.setResponseTime("Time for insert was:" + Double.toString(elapsedTimeInSecond)+" seconds");
+        prescriptionReturn.setResponseTime("Time for insert was:" + Double.toString(elapsedTimeInSecond) + " seconds");
         return prescriptionReturn;
 
     }

@@ -28,7 +28,8 @@ public class Medicine implements Serializable {
     @Column(name="name")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    //cascade type merge
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 

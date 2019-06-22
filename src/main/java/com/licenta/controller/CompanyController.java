@@ -46,7 +46,7 @@ public class CompanyController {
         long start_time = System.nanoTime();
         for (int i = 0; i < 7000; i++) {
             Company c = new Company();
-            String CUI = "123998777662" + i;
+            String CUI = "1239987776622444" + i;
             String name = "mockCompany";
             List<Medicine> medicines = new ArrayList<>();
             c.setCUI(CUI);
@@ -59,8 +59,8 @@ public class CompanyController {
         long duration = end_time - start_time;
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
-        log.info("Time for insert was: " + Double.toString(elapsedTimeInSecond) +" seconds");
-        companyReturn.setResponseTime("Time company insert is: "+ Double.toString(elapsedTimeInSecond));
+        log.info("Time for insert was: " + Double.toString(elapsedTimeInSecond) + " seconds");
+        companyReturn.setResponseTime("Time company insert is: " + Double.toString(elapsedTimeInSecond));
         return companyReturn;
 
     }
