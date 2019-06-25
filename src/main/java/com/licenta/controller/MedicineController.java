@@ -214,6 +214,14 @@ public class MedicineController {
         long duration = end_time-start_time;
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
         log.info("Time relational is: "+ Double.toString(elapsedTimeInSecond));
+        if(medicinesList.size()>0){
+            medicinesList.get(0).setResponseTime("Search PostgreSQL: " + Double.toString(elapsedTimeInSecond));
+        }
+        else{
+            Medicine m = new Medicine();
+            m.setResponseTime("Search PostgreSQL: " + Double.toString(elapsedTimeInSecond));
+            medicinesList.add(m);
+        }
         return medicinesList;
     }
 

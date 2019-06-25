@@ -201,7 +201,7 @@ public class PrescriptionController {
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
         log.info("Time prescription delete is: " + Double.toString(elapsedTimeInSecond));
-        p.setResponseTime(Double.toString(elapsedTimeInSecond));
+        prescriptionReturn.setResponseTime(Double.toString(elapsedTimeInSecond));
         log.info("Prescription deleted successfully!");
         return prescriptionReturn;
     }

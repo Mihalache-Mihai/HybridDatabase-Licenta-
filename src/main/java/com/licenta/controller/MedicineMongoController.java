@@ -32,7 +32,14 @@ public class MedicineMongoController {
 
         double elapsedTimeInSecond = (double) duration / 1_000_000_000;
         log.info("Time non relational is: "+ Double.toString(elapsedTimeInSecond));
-
+        if(medicinesList.size()>0){
+            medicinesList.get(0).setResponseTime("Search Mongo: " + Double.toString(elapsedTimeInSecond));
+        }
+        else{
+            MedicineMongo m = new MedicineMongo();
+            m.setResponseTime("Search Mongo: " + Double.toString(elapsedTimeInSecond));
+            medicinesList.add(m);
+        }
         return medicinesList;
 
     }
